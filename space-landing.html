@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Beyond the Sky — Cinematic Space Travel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;min-height:100vh;font-family:'Barlow',sans-serif;overflow-x:hidden}
+
+/* ── Liquid glass ── */
+.lg,.lgs{position:relative;overflow:hidden}
+.lg{background:rgba(255,255,255,.04);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);box-shadow:inset 0 1px 1px rgba(255,255,255,.1)}
+.lgs{background:rgba(255,255,255,.06);backdrop-filter:blur(50px);-webkit-backdrop-filter:blur(50px);box-shadow:4px 4px 4px rgba(0,0,0,.05),inset 0 1px 1px rgba(255,255,255,.15)}
+.lg::before,.lgs::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.4px;pointer-events:none;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.lg::before{background:linear-gradient(180deg,rgba(255,255,255,.45) 0%,rgba(255,255,255,.15) 20%,rgba(255,255,255,0) 40%,rgba(255,255,255,0) 60%,rgba(255,255,255,.15) 80%,rgba(255,255,255,.45) 100%)}
+.lgs::before{background:linear-gradient(180deg,rgba(255,255,255,.5) 0%,rgba(255,255,255,.2) 20%,rgba(255,255,255,0) 40%,rgba(255,255,255,0) 60%,rgba(255,255,255,.2) 80%,rgba(255,255,255,.5) 100%)}
+
+/* ── Sections ── */
+section{position:relative;overflow:hidden;background:#000}
+#hero{height:100vh;width:100%}
+#capabilities{min-height:100vh}
+
+/* ── Video layers ── */
+.vid-bg{position:absolute;object-fit:cover;z-index:2;opacity:0;transition:none}
+#hero .vid-bg{left:50%;top:0;transform:translateX(-50%);width:120%;height:120%;object-position:top}
+#capabilities .vid-bg{inset:0;width:100%;height:100%}
+
+/* ── Nebula overlays ── */
+.nebula{position:absolute;inset:0;z-index:3;pointer-events:none}
+
+/* ── UI layers ── */
+.ui{position:relative;z-index:10}
+
+/* ── Navbar ── */
+#navbar{position:fixed;top:16px;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0 4rem}
+.nav-logo{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-logo span{font-family:'Instrument Serif',serif;font-style:italic;color:#fff;font-size:22px;line-height:1}
+.nav-pill{border-radius:9999px;display:flex;align-items:center;padding:6px 6px;gap:4px}
+.nav-pill button{padding:8px 12px;font-size:13px;font-weight:500;color:rgba(255,255,255,.9);background:none;border:none;cursor:pointer;white-space:nowrap;font-family:'Barlow',sans-serif;transition:color .2s}
+.nav-pill button:hover{color:#fff}
+.nav-cta{margin-left:4px;display:flex;align-items:center;gap:6px;padding:8px 18px;border-radius:9999px;background:#fff;color:#000;font-size:13px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;font-family:'Barlow',sans-serif;transition:opacity .2s}
+.nav-cta:hover{opacity:.85}
+.nav-spacer{width:48px;flex-shrink:0}
+
+/* ── Hero content ── */
+#hero-ui{display:flex;flex-direction:column;height:100vh}
+#hero-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:96px;padding-left:16px;padding-right:16px;text-align:center;gap:0}
+.badge{border-radius:9999px;display:inline-flex;align-items:center;gap:8px;padding:6px 6px;margin-bottom:24px}
+.badge-new{background:#fff;color:#000;padding:4px 12px;border-radius:9999px;font-size:11px;font-weight:600;font-family:'Barlow',sans-serif}
+.badge-text{font-size:13px;color:rgba(255,255,255,.9);font-family:'Barlow',sans-serif;padding-right:12px}
+
+/* ── Blur headline ── */
+#headline{font-family:'Instrument Serif',serif;font-style:italic;color:#fff;font-size:clamp(3rem,6.5vw,5.5rem);line-height:.85;letter-spacing:-4px;max-width:720px;display:flex;flex-wrap:wrap;justify-content:center;row-gap:.1em;margin:0 auto}
+#headline .word{display:inline-block;margin-right:.28em;opacity:0;filter:blur(10px);transform:translateY(50px);transition:opacity .7s ease,filter .7s ease,transform .7s ease}
+#headline .word.in{opacity:1;filter:blur(0px);transform:translateY(0)}
+
+.subhead{margin-top:18px;font-size:15px;color:rgba(255,255,255,.95);max-width:580px;font-weight:300;line-height:1.45;opacity:0;filter:blur(10px);transform:translateY(20px);transition:opacity .7s ease,filter .7s ease,transform .7s ease}
+.subhead.in{opacity:1;filter:blur(0);transform:translateY(0)}
+
+.ctas{display:flex;align-items:center;gap:24px;margin-top:24px;opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
+.ctas.in{opacity:1;transform:translateY(0)}
+.cta-primary{border-radius:9999px;padding:10px 22px;font-size:13px;font-weight:500;color:#fff;display:flex;align-items:center;gap:8px;border:none;cursor:pointer;font-family:'Barlow',sans-serif}
+.cta-secondary{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:#fff;background:none;border:none;cursor:pointer;font-family:'Barlow',sans-serif;opacity:.9}
+.cta-secondary:hover{opacity:1}
+
+/* ── Stats ── */
+.stats{display:flex;gap:16px;margin-top:32px;opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
+.stats.in{opacity:1;transform:translateY(0)}
+.stat-card{padding:20px;width:210px;border-radius:20px;display:flex;flex-direction:column}
+.stat-num{font-family:'Instrument Serif',serif;font-style:italic;color:#fff;font-size:40px;letter-spacing:-1px;line-height:1;margin-top:16px}
+.stat-label{font-family:'Barlow',sans-serif;color:rgba(255,255,255,.8);font-size:11px;font-weight:300;margin-top:8px}
+
+/* ── Partners ── */
+#partners{display:flex;flex-direction:column;align-items:center;gap:16px;padding-bottom:32px;opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
+#partners.in{opacity:1;transform:translateY(0)}
+.partners-chip{border-radius:9999px;padding:4px 14px}
+.partners-chip span{font-size:11px;font-weight:500;color:#fff;font-family:'Barlow',sans-serif}
+.partner-names{display:flex;align-items:center;gap:56px}
+.partner-name{font-family:'Instrument Serif',serif;font-style:italic;color:#fff;font-size:28px;letter-spacing:-.5px}
+
+/* ── Capabilities ── */
+#cap-ui{padding:96px 80px 40px;display:flex;flex-direction:column;min-height:100vh}
+.kicker{font-family:'Barlow',sans-serif;color:rgba(255,255,255,.7);font-size:13px;margin-bottom:24px;letter-spacing:.5px}
+.cap-heading{font-family:'Instrument Serif',serif;font-style:italic;color:#fff;font-size:clamp(3.5rem,6.5vw,6rem);line-height:.9;letter-spacing:-3px;margin-bottom:auto}
+
+/* ── Cards ── */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:64px}
+.card{border-radius:20px;padding:24px;min-height:360px;display:flex;flex-direction:column}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.card-icon-wrap{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-tags{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;max-width:68%}
+.card-tag{border-radius:9999px;padding:4px 10px;font-size:11px;color:rgba(255,255,255,.9);font-family:'Barlow',sans-serif;white-space:nowrap}
+.card-spacer{flex:1}
+.card-bottom{margin-top:24px}
+.card-title{font-family:'Instrument Serif',serif;font-style:italic;color:#fff;font-size:clamp(1.75rem,2.8vw,2.25rem);letter-spacing:-1px;line-height:1}
+.card-body{margin-top:12px;font-size:13px;color:rgba(255,255,255,.85);font-family:'Barlow',sans-serif;font-weight:300;line-height:1.55;max-width:32ch}
+
+/* ── Canvas starfield ── */
+.starfield{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+
+/* ── Entrance animation delays ── */
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══════════════════════════════════════════════ -->
+<section id="hero">
+  <canvas class="starfield" id="stars1"></canvas>
+  <div class="nebula" style="background:radial-gradient(ellipse 90% 60% at 50% 0%,rgba(28,12,80,.85) 0%,transparent 60%)"></div>
+  <video class="vid-bg" id="vid1" muted playsinline preload="auto"
+    src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260418_080021_d598092b-c4c2-4e53-8e46-94cf9064cd50.mp4">
+  </video>
+
+  <div class="ui" id="hero-ui">
+    <!-- Navbar -->
+    <nav id="navbar">
+      <div class="lg nav-logo"><span>a</span></div>
+      <div class="lg nav-pill">
+        <button>Home</button>
+        <button>Voyages</button>
+        <button>Worlds</button>
+        <button>Innovation</button>
+        <button>Plan Launch</button>
+        <button class="nav-cta">Claim a Spot
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </button>
+      </div>
+      <div class="nav-spacer"></div>
+    </nav>
+
+    <!-- Center content -->
+    <div id="hero-center">
+      <div class="lg badge" id="badge" style="opacity:0;filter:blur(10px);transform:translateY(20px);transition:opacity .7s ease,filter .7s ease,transform .7s ease">
+        <span class="badge-new">New</span>
+        <span class="badge-text">Maiden Crewed Voyage to Mars Arrives 2026</span>
+      </div>
+
+      <div id="headline">
+        <span class="word">Venture</span>
+        <span class="word">Past</span>
+        <span class="word">Our</span>
+        <span class="word">Sky</span>
+        <span class="word">Across</span>
+        <span class="word">the</span>
+        <span class="word">Universe</span>
+      </div>
+
+      <p class="subhead" id="subhead">
+        Discover the universe in ways once unimaginable. Our pioneering vessels and breakthrough engineering bring deep-space exploration within reach—secure and extraordinary.
+      </p>
+
+      <div class="ctas" id="ctas">
+        <button class="lgs cta-primary">
+          Start Your Voyage
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </button>
+        <button class="cta-secondary">
+          View Liftoff
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+        </button>
+      </div>
+
+      <div class="stats" id="stats">
+        <div class="lg stat-card">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <div class="stat-num">34.5 Min</div>
+          <div class="stat-label">Average Videos Watch Time</div>
+        </div>
+        <div class="lg stat-card">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <div class="stat-num">2.8B+</div>
+          <div class="stat-label">Users Across the Globe</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Partners -->
+    <div id="partners">
+      <div class="lg partners-chip"><span>Collaborating with top aerospace pioneers globally</span></div>
+      <div class="partner-names">
+        <span class="partner-name">Aeon</span>
+        <span class="partner-name">Vela</span>
+        <span class="partner-name">Apex</span>
+        <span class="partner-name">Orbit</span>
+        <span class="partner-name">Zeno</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CAPABILITIES ════════════════════════════════════════ -->
+<section id="capabilities">
+  <canvas class="starfield" id="stars2"></canvas>
+  <div class="nebula" style="background:radial-gradient(ellipse 80% 65% at 65% 40%,rgba(6,18,50,.85) 0%,transparent 65%)"></div>
+  <video class="vid-bg" id="vid2" muted playsinline preload="auto"
+    src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260418_094631_d30ab262-45ee-4b7d-99f3-5d5848c8ef13.mp4">
+  </video>
+
+  <div class="ui" id="cap-ui">
+    <div>
+      <p class="kicker">// Capabilities</p>
+      <h2 class="cap-heading">Production<br>evolved</h2>
+    </div>
+
+    <div class="cards">
+
+      <!-- Card 1 -->
+      <div class="lg card">
+        <div class="card-top">
+          <div class="lg card-icon-wrap">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21H5Zm1-4h12l-3.75-5-3 4L9 13l-3 4Z"/></svg>
+          </div>
+          <div class="card-tags">
+            <span class="lg card-tag">Natural Context</span>
+            <span class="lg card-tag">Photo Realism</span>
+            <span class="lg card-tag">Infinite Settings</span>
+            <span class="lg card-tag">Eco-Vibe</span>
+          </div>
+        </div>
+        <div class="card-spacer"></div>
+        <div class="card-bottom">
+          <h3 class="card-title">AI Scenery</h3>
+          <p class="card-body">AI analyzes your product to create indistinguishable natural environments — from Icelandic cliffs to misty forests.</p>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="lg card">
+        <div class="card-top">
+          <div class="lg card-icon-wrap">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M4 6.47 5.76 10H20v8H4V6.47M22 4h-4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.89-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4Z"/></svg>
+          </div>
+          <div class="card-tags">
+            <span class="lg card-tag">Scale Fast</span>
+            <span class="lg card-tag">Visual Consistency</span>
+            <span class="lg card-tag">Time Saver</span>
+            <span class="lg card-tag">Ready to Post</span>
+          </div>
+        </div>
+        <div class="card-spacer"></div>
+        <div class="card-bottom">
+          <h3 class="card-title">Batch Production</h3>
+          <p class="card-body">Style your entire product line in minutes. Create a unified visual identity for catalogues and social media without weeks of retouching.</p>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="lg card">
+        <div class="card-top">
+          <div class="lg card-icon-wrap">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1Zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7Z"/></svg>
+          </div>
+          <div class="card-tags">
+            <span class="lg card-tag">Ray Tracing</span>
+            <span class="lg card-tag">Physical Shadows</span>
+            <span class="lg card-tag">Studio Quality</span>
+            <span class="lg card-tag">Sunlight Sync</span>
+          </div>
+        </div>
+        <div class="card-spacer"></div>
+        <div class="card-bottom">
+          <h3 class="card-title">Smart Lighting</h3>
+          <p class="card-body">Automatic lighting and material adjustment. Achieve flawless integration with realistic shadows and sunlight.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+/* ══ Starfield ══════════════════════════════════════════════ */
+function initStars(canvasId, density) {
+  const c = document.getElementById(canvasId);
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const stars = [];
+  let raf, t = 0;
+  function resize() { c.width = c.offsetWidth || window.innerWidth; c.height = c.offsetHeight || window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  for (let i = 0; i < density; i++) stars.push({
+    x: Math.random(), y: Math.random(),
+    r: Math.random() * 1.4 + 0.2,
+    a: Math.random() * 0.6 + 0.3,
+    sp: Math.random() * 0.003 + 0.001,
+    ph: Math.random() * Math.PI * 2
+  });
+  function draw() {
+    t += 0.016;
+    ctx.clearRect(0, 0, c.width, c.height);
+    stars.forEach(s => {
+      const a = s.a * (0.5 + 0.5 * Math.sin(t * s.sp * 30 + s.ph));
+      ctx.beginPath();
+      ctx.arc(s.x * c.width, s.y * c.height, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + a + ')';
+      ctx.fill();
+    });
+    raf = requestAnimationFrame(draw);
+  }
+  draw();
+}
+initStars('stars1', 180);
+initStars('stars2', 120);
+
+/* ══ FadingVideo ════════════════════════════════════════════ */
+function initVideo(id) {
+  const v = document.getElementById(id);
+  if (!v) return;
+  let raf = null, fadingOut = false;
+  const FADE = 500, LEAD = 0.55;
+
+  function fadeTo(target, ms) {
+    if (raf) cancelAnimationFrame(raf);
+    const t0 = performance.now(), s0 = parseFloat(v.style.opacity) || 0;
+    function step(now) {
+      const p = Math.min((now - t0) / ms, 1);
+      v.style.opacity = s0 + (target - s0) * p;
+      if (p < 1) raf = requestAnimationFrame(step);
+      else { v.style.opacity = target; raf = null; }
+    }
+    raf = requestAnimationFrame(step);
+  }
+
+  v.addEventListener('loadeddata', function() {
+    v.style.opacity = '0';
+    v.play().catch(function(){});
+    fadeTo(1, FADE);
+  });
+  v.addEventListener('timeupdate', function() {
+    if (!fadingOut && v.duration && v.duration - v.currentTime <= LEAD && v.duration - v.currentTime > 0) {
+      fadingOut = true;
+      fadeTo(0, FADE);
+    }
+  });
+  v.addEventListener('ended', function() {
+    v.style.opacity = '0';
+    setTimeout(function() {
+      v.currentTime = 0;
+      fadingOut = false;
+      v.play().catch(function(){});
+      fadeTo(1, FADE);
+    }, 100);
+  });
+}
+initVideo('vid1');
+initVideo('vid2');
+
+/* ══ Entrance animations ════════════════════════════════════ */
+function animateIn() {
+  // Badge
+  setTimeout(function() {
+    var el = document.getElementById('badge');
+    el.style.opacity = '1'; el.style.filter = 'blur(0)'; el.style.transform = 'translateY(0)';
+  }, 400);
+
+  // Headline words staggered
+  var words = document.querySelectorAll('#headline .word');
+  words.forEach(function(w, i) {
+    setTimeout(function() { w.classList.add('in'); }, 500 + i * 100);
+  });
+
+  // Subhead
+  setTimeout(function() {
+    var el = document.getElementById('subhead');
+    el.classList.add('in');
+  }, 800);
+
+  // CTAs
+  setTimeout(function() {
+    document.getElementById('ctas').classList.add('in');
+  }, 1100);
+
+  // Stats
+  setTimeout(function() {
+    document.getElementById('stats').classList.add('in');
+  }, 1300);
+
+  // Partners
+  setTimeout(function() {
+    document.getElementById('partners').classList.add('in');
+  }, 1400);
+}
+
+// Kick off on DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', animateIn);
+} else {
+  animateIn();
+}
+</script>
+</body>
+</html>
